@@ -148,8 +148,7 @@ class InboxMessageEntity(
 @Table(name = "outbox")
 class OutboxMessageEntity(
     @Id
-    @Generated
-    @ColumnDefault("gen_random_uuid()")
+    @GeneratedValue(strategy = GenerationType.AUTO) // Use AUTO for UUID generation
     val id: UUID? = null,
     @Enumerated(value = EnumType.STRING)
     val aggregateType: AggregateType,

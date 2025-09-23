@@ -3,10 +3,10 @@ spring:
     name: book-service
 
   datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://book-db:5432/book
-    username: postgres
-    password: password
+    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://azurelearnindbserverdemo.database.windows.net:1433;database=DemoDB;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 
 logging.level.com.romankudryashov.eventdrivenarchitecture: debug
 
