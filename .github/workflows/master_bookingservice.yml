@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy JAR app to Azure Web App - BookingService
 
 on:
@@ -31,11 +28,14 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
+      - name: Debug build artifacts
+        run: ls -l book-service/build/libs
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/build/libs/*.jar'
+          path: 'book-service/build/libs/book-service.jar' # Correct path to the JAR file
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,6 +50,9 @@ jobs:
         with:
           name: java-app
       
+      - name: Debug artifact download
+        run: ls -l ${{ github.workspace }}
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -63,4 +66,4 @@ jobs:
         with:
           app-name: 'BookingService'
           slot-name: 'Production'
-          package: '*.jar'
+          package: 'book-service.jar' # Reference the downloaded artifact
