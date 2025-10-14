@@ -34,7 +34,9 @@ dependencies {
     implementation(libs.kotlinReflect)
     implementation(libs.jacksonModuleKotlin)
     implementation(libs.flyway)
-    implementation("com.microsoft.sqlserver:mssql-jdbc:13.2.0.jre11")
+    implementation("com.azure:azure-storage-file-share:12.19.0")
+//    implementation("com.microsoft.sqlserver:mssql-jdbc:13.2.0.jre11")
+    implementation(libs.azureBlobStorage)
     // `implementation` is needed only to handle PSQLException in the exception handler. if that is not necessary, the dependency should be `runtimeOnly`
     implementation(libs.postgres)
     testImplementation(libs.springBootStarter.test)

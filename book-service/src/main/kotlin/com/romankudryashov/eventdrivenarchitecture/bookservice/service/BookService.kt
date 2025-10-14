@@ -22,4 +22,8 @@ interface BookService {
     fun cancelBookLoan(bookId: Long, bookLoanId: Long)
 
     fun returnBook(bookId: Long, bookLoanId: Long)
+
+    fun getImageById(bookId: Long): org.springframework.core.io.Resource?
+
+    fun saveImage(bookId: Long, imageFile: org.springframework.web.multipart.MultipartFile)
 }

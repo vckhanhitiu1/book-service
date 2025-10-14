@@ -21,10 +21,12 @@ import com.romankudryashov.eventdrivenarchitecture.commonmodel.CurrentAndPreviou
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Primary
+import org.springframework.core.io.Resource
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 @Primary
@@ -144,6 +146,14 @@ class BookServiceImpl(
         bookRepository.save(bookToReturn)
 
         outboxMessageService.saveBookReturnedEventMessage(modelOfBookToReturn)
+    }
+
+    override fun getImageById(bookId: Long): Resource? {
+        TODO("Not yet implemented")
+    }
+
+    override fun saveImage(bookId: Long, imageFile: MultipartFile) {
+        TODO("Not yet implemented")
     }
 
     private fun getBookEntityById(id: Long): BookEntity? {

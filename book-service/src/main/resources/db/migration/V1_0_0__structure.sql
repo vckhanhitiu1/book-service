@@ -1,64 +1,64 @@
 create table book(
-                     id bigint primary key identity(1,1),
-                     name nvarchar(255) not null,
+                     id bigint primary key generated always as identity,
+                     name varchar not null,
                      publication_year smallint not null,
-                     status nvarchar(50) not null default 'Active',
-                     created_at datetime2 not null default sysutcdatetime(),
-                     updated_at datetime2 not null default sysutcdatetime()
+                     status varchar not null default 'Active',
+                     created_at timestamptz not null default current_timestamp,
+                     updated_at timestamptz not null default current_timestamp
 );
 
 create table author(
-                       id bigint primary key identity(1,1),
-                       last_name nvarchar(255) not null,
-                       first_name nvarchar(255) not null,
-                       middle_name nvarchar(255),
-                       country nvarchar(255) not null,
+                       id bigint primary key generated always as identity,
+                       last_name varchar not null,
+                       first_name varchar not null,
+                       middle_name varchar,
+                       country varchar not null,
                        date_of_birth date not null,
-                       created_at datetime2 not null default sysutcdatetime(),
-                       updated_at datetime2 not null default sysutcdatetime()
+                       created_at timestamptz not null default current_timestamp,
+                       updated_at timestamptz not null default current_timestamp
 );
 
 create table book_author(
-                            id bigint primary key identity(1,1),
+                            id bigint primary key generated always as identity,
                             book_id bigint references book(id) not null,
                             author_id bigint references author(id) not null,
-                            created_at datetime2 not null default sysutcdatetime(),
-                            updated_at datetime2 not null default sysutcdatetime()
+                            created_at timestamptz not null default current_timestamp,
+                            updated_at timestamptz not null default current_timestamp
 );
 
 create table book_loan(
-                          id bigint primary key identity(1,1),
+                          id bigint primary key generated always as identity,
                           book_id bigint references book(id) not null,
                           user_id bigint not null,
-                          status nvarchar(50) not null default 'Active',
-                          created_at datetime2 not null default sysutcdatetime(),
-                          updated_at datetime2 not null default sysutcdatetime()
+                          status varchar not null default 'Active',
+                          created_at timestamptz not null default current_timestamp,
+                          updated_at timestamptz not null default current_timestamp
 );
 
 create table user_replica(
                              id bigint primary key,
-                             status nvarchar(50) not null
+                             status varchar not null
 );
 
 create table inbox(
-                      id uniqueidentifier primary key,
-                      source nvarchar(255) not null,
-                      type nvarchar(255) not null,
-                      payload nvarchar(max) not null,
-                      status nvarchar(50) not null default 'New',
-                      error nvarchar(255),
-                      processed_by nvarchar(255),
+                      id uuid primary key,
+                      source varchar not null,
+                      type varchar not null,
+                      payload jsonb not null,
+                      status varchar not null default 'New',
+                      error varchar,
+                      processed_by varchar,
                       version smallint not null default 0,
-                      created_at datetime2 not null default sysutcdatetime(),
-                      updated_at datetime2 not null default sysutcdatetime()
+                      created_at timestamptz not null default current_timestamp,
+                      updated_at timestamptz not null default current_timestamp
 );
 
 create table outbox(
-                       id uniqueidentifier primary key default NEWID(),
-                       aggregate_type nvarchar(255) not null,
-                       aggregate_id nvarchar(255) not null,
-                       type nvarchar(255) not null,
-                       payload nvarchar(max) not null,
-                       created_at datetime2 not null default sysutcdatetime(),
-                       updated_at datetime2 not null default sysutcdatetime()
+                       id uuid primary key default gen_random_uuid(),
+                       aggregate_type varchar not null,
+                       aggregate_id varchar not null,
+                       type varchar not null,
+                       payload jsonb not null,
+                       created_at timestamptz not null default current_timestamp,
+                       updated_at timestamptz not null default current_timestamp
 );

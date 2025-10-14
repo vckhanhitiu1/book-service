@@ -1,12 +1,18 @@
 spring:
   application:
     name: book-service
+  cloud:
+    azure:
+      storage:
+        account-name: myappdemoblob
+        account-key: ${BLOB_ACCOUNT_KEY}
+        endpoint: https://myappdemoblob.blob.core.windows.net
 
   datasource:
-    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://azurelearnindbserverdemo.database.windows.net:1433;database=DemoDB;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://myapp.postgres.database.azure.com:5432/postgres
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
 
 logging.level.com.romankudryashov.eventdrivenarchitecture: debug
 
