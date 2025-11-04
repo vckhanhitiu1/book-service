@@ -1,17 +1,12 @@
-# Use an official OpenJDK 21 runtime as the base image
-FROM eclipse-temurin:21-jdk-alpine
+FROM maven:3 as BUILD
 
-# Set the working directory inside the container
-WORKDIR /app
+COPY . /usr/src/app
+RUN mvn --batch-mode -f /usr/src/app/pom.xml clean package
 
-# Copy the application's JAR file into the container
-COPY build/libs/book-service.jar /app/book-service.jar
-
-# Expose the port your application will listen on (optional)
+FROM eclipse-temurin:19-jre
+ENV PORT 8080
 EXPOSE 8080
+COPY --from=BUILD /usr/src/app/target /opt/target
+WORKDIR /opt/target
 
-# Set environment variables (optional)
-ENV JAVA_OPTS="-Xms512m -Xmx1024m"
-
-# Run the application
-ENTRYPOINT ["java", "-jar", "/app/book-service.jar"]
+CMD ["/bin/bash", "-c", "find -type f -name '*-SNAPSHOT.jar' | xargs java -jar"]
