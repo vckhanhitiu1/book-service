@@ -20,7 +20,7 @@ springBootStarter-webSocket = { module = "org.springframework.boot:spring-boot-s
 # common libraries
 kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 jacksonModuleKotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
-flyway = { module = "org.flywaydb:flyway-database-postgresql" }
+flyway = { module = "org.flywaydb:flyway-sqlserver" }
 postgres = { module = "org.postgresql:postgresql" }
 azureBlobStorage = { module = "com.azure.spring:spring-cloud-azure-starter-storage-blob", version = "6.0.0" }
 
