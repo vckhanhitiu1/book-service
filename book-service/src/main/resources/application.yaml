@@ -24,3 +24,8 @@ inbox:
       subtask.timeout: 10000
 
 user.check.use-streaming-data: false
+
+azure:
+  servicebus:
+    queue-name: bookingservicequeue
+    connection-string: ${SERVICE_BUS_CONNECTION_STRING}

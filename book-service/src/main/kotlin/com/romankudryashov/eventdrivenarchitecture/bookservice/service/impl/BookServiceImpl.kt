@@ -9,6 +9,7 @@ import com.romankudryashov.eventdrivenarchitecture.bookservice.exception.NotFoun
 import com.romankudryashov.eventdrivenarchitecture.bookservice.persistence.BookRepository
 import com.romankudryashov.eventdrivenarchitecture.bookservice.persistence.entity.BookEntity
 import com.romankudryashov.eventdrivenarchitecture.bookservice.persistence.entity.BookLoanEntity
+import com.romankudryashov.eventdrivenarchitecture.bookservice.service.AzureServiceBusSender
 import com.romankudryashov.eventdrivenarchitecture.bookservice.service.BookService
 import com.romankudryashov.eventdrivenarchitecture.bookservice.service.OutboxMessageService
 import com.romankudryashov.eventdrivenarchitecture.bookservice.service.UserReplicaService
@@ -18,6 +19,11 @@ import com.romankudryashov.eventdrivenarchitecture.bookservice.service.converter
 import com.romankudryashov.eventdrivenarchitecture.bookservice.service.converter.BookLoanToSaveToEntityConverter
 import com.romankudryashov.eventdrivenarchitecture.bookservice.service.converter.BookToSaveToEntityConverter
 import com.romankudryashov.eventdrivenarchitecture.commonmodel.CurrentAndPreviousState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Primary
@@ -39,11 +45,15 @@ class BookServiceImpl(
     private val bookLoanEntityToDtoConverter: BookLoanEntityToDtoConverter,
     private val bookLoanToSaveToEntityConverter: BookLoanToSaveToEntityConverter,
     private val userReplicaService: UserReplicaService,
+    private val azureServiceBusSender: AzureServiceBusSender,
+
     @Value("\${user.check.use-streaming-data}")
     private val useStreamingDataToCheckUser: Boolean
 ) : BookService {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
+
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun getAll(): List<BookDto> = bookRepository.findAllByStatusOrderByIdAsc(BookEntity.Status.Active)
         .map { bookEntityToDtoConverter.convert(it) }
@@ -62,6 +72,14 @@ class BookServiceImpl(
         val createdBookModel = bookEntityToModelConverter.convert(createdBook)
         outboxMessageService.saveBookCreatedEventMessage(createdBookModel)
 
+        coroutineScope.launch {
+            try {
+                azureServiceBusSender.sendBookCreatedEvent(createdBookModel)
+                log.info("Service Bus message sent for bookId={}", createdBook.id)
+            } catch (ex: Exception) {
+                log.error("Failed to send Service Bus message for bookId={}", createdBook.id, ex)
+            }
+        }
         return bookEntityToDtoConverter.convert(createdBook)
     }
 
